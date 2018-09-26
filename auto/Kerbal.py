@@ -8,6 +8,7 @@ class Vessel:
         self.reference_frame = self.vessel.orbit.body.reference_frame
         self.position = connection.add_stream(self.vessel.position, self.reference_frame)
         self.flight = connection.add_stream(self.vessel.flight, self.reference_frame)
+        self.brake()
 
     def visualize(self, enable=True):
         if enable:
@@ -22,13 +23,10 @@ class Vessel:
         self.vessel.control.brakes = brake
 
     def speed(self):
-        return round(self.flight().speed, 2)
+        return self.flight().speed
 
 
 class Car(Vessel, SimpleCar.SimpleCar):
     def __init__(self, connection):
         SimpleCar.SimpleCar.__init__(self)
         Vessel.__init__(self, connection)
-
-
-

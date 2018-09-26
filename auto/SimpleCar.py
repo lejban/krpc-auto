@@ -1,18 +1,21 @@
+import logging
+import simple_pid
+
+
 class SimpleCar:
     def __init__(self):
         self.throttle = 0
         self.brakes = 1
+        self.pid = simple_pid.PID(1, 0.1, 0.05, setpoint=1)
+        self.pid.output_limits = (-1, 1)
 
     def set_speed(self, target_speed):
+        self.pid.setpoint = target_speed
         speed = self.speed()
-        if speed > target_speed:
-            self.brake()
-            return -1
-        elif speed < target_speed:
-            self.accelerate(1)
-            return 1
-        else:
-            return 0
+        change = self.pid(speed)
+        logging.info("Speed " + format(speed, '.4f') + " m/s, change: " + format(change, '.4f'))
+        self.accelerate(change)
+        return change
 
     def accelerate(self, throttle):
         pass
