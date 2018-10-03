@@ -1,6 +1,5 @@
 import SimpleCar
 
-
 class Vessel:
     def __init__(self, connection):
         self.connection = connection
@@ -27,6 +26,6 @@ class Vessel:
 
 
 class Car(Vessel, SimpleCar.SimpleCar):
-    def __init__(self, connection):
-        SimpleCar.SimpleCar.__init__(self)
+    def __init__(self, connection, pid_start_values):
+        SimpleCar.SimpleCar.__init__(self, pid_start_values)
         Vessel.__init__(self, connection)
