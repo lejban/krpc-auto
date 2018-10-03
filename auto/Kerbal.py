@@ -1,4 +1,6 @@
 import SimpleCar
+import AICar
+
 
 class Vessel:
     def __init__(self, connection):
@@ -25,7 +27,14 @@ class Vessel:
         return self.flight().speed
 
 
-class Car(Vessel, SimpleCar.SimpleCar):
+class SimpleKerbalCar(Vessel, SimpleCar.SimpleCar):
     def __init__(self, connection, pid_start_values):
-        SimpleCar.SimpleCar.__init__(self, pid_start_values)
         Vessel.__init__(self, connection)
+        SimpleCar.SimpleCar.__init__(self, pid_start_values)
+
+
+class AIKerbalCar(Vessel, AICar.AICar):
+    def __init__(self, connection):
+        AICar.AICar.__init__(self)
+        Vessel.__init__(self, connection)
+

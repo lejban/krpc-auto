@@ -5,28 +5,45 @@ import krpc
 import Kerbal
 import Graph
 
-pid_start_values = [1, 0.1, 0.1]
-
-
 logging.basicConfig(format="%(message)s", level=logging.INFO)
-target_speed = 5
-connection = krpc.connect()
-car = Kerbal.Car(connection, pid_start_values)
-g_win = Graph.Window("Stats", "PID:" + str(pid_start_values))
-g_speed = Graph.Graph("Speed", "m/s")
-q_change = Graph.Graph("Change", "Speed delta")
-g_win.add_graph(g_speed)
-g_win.add_graph(q_change)
 
+pid_start_values = [1, 0.1, 0.1, (-1, 1)]
+target_speed = 2
+simulation_lenght = 60
+max_delta = 0.2
+sleep_time = 0.1
+
+connection = krpc.connect()
+car = Kerbal.SimpleKerbalCar(connection, pid_start_values)
+window = Graph.Window("Stats", "PID:" + str(pid_start_values))
+speed_graph = window.add_graph("Speed")
+target_speed_line = speed_graph.add_line("Target m/s")
+actual_speed_line = speed_graph.add_line("Actual m/s")
+delta_graph = window.add_graph("Change")
+target_delta_line = delta_graph.add_line("Target Delta")
+actual_delta_line = delta_graph.add_line("Actual Delta")
 logging.info("Simulation Started!")
-run_time = 0
-while run_time < 60:
+
+speed = 0
+run_time = -1
+while run_time < simulation_lenght:
     run_time += 1
-    time.sleep(0.1)
+    change = max_delta
+    speed = speed + change
+    if speed > target_speed:
+        speed = target_speed
+        change = 0
+    target_speed_line.add_value(run_time, speed)
+    target_delta_line.add_value(run_time, change)
+
+run_time = -1
+while run_time < simulation_lenght:
+    run_time += 1
+    time.sleep(sleep_time)
     change = car.set_speed(target_speed)
-    g_speed.add_value(run_time, car.speed())
-    q_change.add_value(run_time, change)
+    actual_speed_line.add_value(run_time, car.speed())
+    actual_delta_line.add_value(run_time, change)
 
 car.brake()
-g_win.render()
+window.render()
 logging.info("Simulation completed!")

@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as pyplot
 
 
 class Window:
@@ -9,28 +9,42 @@ class Window:
         self.graphs = []
         self.figure = False
 
-    def add_graph(self, graph):
+    def add_graph(self, y):
+        graph = Graph(y)
         self.graphs.append(graph)
+        return graph
 
     def render(self):
-        self.figure = plt.figure(self.name)
+        self.figure = pyplot.figure(self.name,figsize=(10,8))
         i = 0
         for graph in self.graphs:
             i += 1
-            plt.subplot(2, 1, i)
-            plt.plot(graph.x, graph.y)
+            pyplot.subplot(2, 1, i)
+            for line in graph.lines:
+                pyplot.plot(line.x, line.y, label=line.name)
             if i == 1:
-                plt.title(self.title)
-            plt.ylabel(graph.ylabel)
-            plt.grid(True)
-        plt.xlabel(self.xlabel)
-        plt.show()
+                pyplot.title(self.title)
+            pyplot.legend()
+            pyplot.grid(True)
+        pyplot.ylabel(graph.ylabel)
+        pyplot.xlabel(self.xlabel)
+        pyplot.show()
 
 
 class Graph:
-    def __init__(self, name, y):
-        self.name = name
+    def __init__(self, y):
         self.ylabel = y
+        self.lines = []
+
+    def add_line(self, name):
+        line = Line(name)
+        self.lines.append(line)
+        return line
+
+
+class Line:
+    def __init__(self, name):
+        self.name = name
         self.x = []
         self.y = []
 
