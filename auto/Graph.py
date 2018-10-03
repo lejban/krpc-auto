@@ -9,8 +9,8 @@ class Window:
         self.graphs = []
         self.figure = False
 
-    def add_graph(self, y):
-        graph = Graph(y)
+    def add_graph(self, y, legend=True):
+        graph = Graph(y, legend)
         self.graphs.append(graph)
         return graph
 
@@ -19,22 +19,24 @@ class Window:
         i = 0
         for graph in self.graphs:
             i += 1
-            pyplot.subplot(2, 1, i)
+            pyplot.subplot(len(self.graphs), 1, i)
             for line in graph.lines:
                 pyplot.plot(line.x, line.y, label=line.name)
             if i == 1:
                 pyplot.title(self.title)
-            pyplot.legend()
+            if graph.legend:
+                pyplot.legend()
             pyplot.grid(True)
-        pyplot.ylabel(graph.ylabel)
+            pyplot.ylabel(graph.ylabel)
         pyplot.xlabel(self.xlabel)
         pyplot.show()
 
 
 class Graph:
-    def __init__(self, y):
+    def __init__(self, y, legend):
         self.ylabel = y
         self.lines = []
+        self.legend = legend
 
     def add_line(self, name):
         line = Line(name)
